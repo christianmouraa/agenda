@@ -5,7 +5,8 @@
  */
 package agenda.controller;
 
-import agenda.model.AgendaModel;
+import agenda.model.ContatoDAO;
+import agenda.model.Contato;
 import agenda.view.AgendaView;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
@@ -22,12 +23,12 @@ import javax.swing.table.DefaultTableModel;
 public class AgendaController {
     
     AgendaView view;
-    AgendaModel model;
+    ContatoDAO model;
     
     public AgendaController(AgendaView view){
         
         this.view = view;
-        this.model = new AgendaModel();
+        this.model = new ContatoDAO();
     }
     
     public void editarContato(){
@@ -64,6 +65,30 @@ public class AgendaController {
 //                }
 //        }
         
+    }
+    
+    public void AdicionarContato(){
+        
+        Contato contato = new Contato(
+                
+            view.getCampoTextoGenerico().getText(),
+            view.getCampoTelefone().getText(),
+            view.getCampoAniver().getText(),
+            view.getCampoAniver().getText()
+        );
+        
+        if (!model.adicionar(contato, false)) {
+            int opcao = JOptionPane.showConfirmDialog(view, 
+                "Este número de telefone já está relacionado à um contato"
+              + "deseja continuar?"
+            );
+            
+            if (opcao == 0) {
+                model.adicionar(contato, true);
+            }
+        }
+        
+        popularTabela();
     }
     
     public void popularTabela(){
