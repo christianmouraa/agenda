@@ -16,6 +16,8 @@ public class Contato {
     private String email;
     private String aniversario;
     
+    public Contato(){}
+    
     public Contato(String nome, String telefone, String email, String aniversario){
         
         this.nome = nome;
@@ -34,8 +36,14 @@ public class Contato {
     /**
      * @param nome the nome to set
      */
-    public void setNome(String nome) {
-        this.nome = nome;
+    public boolean setNome(String nome) {
+        
+        if (nome.matches("\\w")) {
+            
+            this.nome = nome;
+            return true;
+            
+        }else return false;
     }
 
     /**
@@ -48,8 +56,13 @@ public class Contato {
     /**
      * @param telefone the telefone to set
      */
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
+    public boolean setTelefone(String telefone) {
+        
+        if (telefone.matches("\\d{8}|\\d{9}|\\d{11}")) {
+            
+            this.telefone = telefone;
+            return true;
+        }else return false;
     }
 
     /**
@@ -62,8 +75,12 @@ public class Contato {
     /**
      * @param email the email to set
      */
-    public void setEmail(String email) {
-        this.email = email;
+    public boolean setEmail(String email) {
+        if (email.matches("[a-zA-Z1-9\\.-]{2,}@[a-zA-Z1-9-]{2,}\\.[a-zA-Z1-9-]{2,5}(\\.\\w{2,5}){0,1}")) {
+            this.email = email;
+            return true;
+        }return false;
+        
     }
     
     /**
