@@ -67,28 +67,34 @@ public class AgendaController {
         
     }
     
-    public void AdicionarContato(){
+    public boolean AdicionarContato(){
         
         Contato contato = new Contato(
                 
             view.getCampoTextoGenerico().getText(),
             view.getCampoTelefone().getText(),
-            view.getCampoAniver().getText(),
+            view.getCampoEmail().getText(),
             view.getCampoAniver().getText()
         );
         
-        if (!model.adicionar(contato, false)) {
-            int opcao = JOptionPane.showConfirmDialog(view, 
-                "Este número de telefone já está relacionado à um contato"
-              + "deseja continuar?"
-            );
+        if (!contato.getTelefone().equals("")) {
             
-            if (opcao == 0) {
-                model.adicionar(contato, true);
+            if (!model.adicionar(contato, false)) {
+                int opcao = JOptionPane.showConfirmDialog(view, 
+                    "Este número de telefone já está relacionado à um contato"
+                  + "deseja continuar?"
+                );
+
+                if (opcao == 0) model.adicionar(contato, true);
+                else return false;
             }
+
+            popularTabela();
+            
+            return true;
         }
         
-        popularTabela();
+        return false;
     }
     
     public void popularTabela(){

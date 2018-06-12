@@ -15,9 +15,9 @@ public class Contato {
     private String telefone;
     private String email;
     private String aniversario;
-    
+ 
     public Contato(){}
-    
+ 
     public Contato(String nome, String telefone, String email, String aniversario){
         
         this.nome = nome;
@@ -45,7 +45,7 @@ public class Contato {
             
         }else return false;
     }
-
+    
     /**
      * @return the telefone
      */
@@ -64,7 +64,7 @@ public class Contato {
             return true;
         }else return false;
     }
-
+    
     /**
      * @return the email
      */
@@ -80,8 +80,7 @@ public class Contato {
             this.email = email;
             return true;
         }return false;
-        
-    }
+    }    
     
     /**
      * @return the aniversario

@@ -6,7 +6,6 @@
 package agenda.view;
 
 import agenda.controller.AgendaController;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -23,6 +22,9 @@ public class AgendaView extends javax.swing.JFrame {
         initComponents();
         controller = new AgendaController(this);
         controller.popularTabela();
+        campoTelefone.setEnabled(false);
+        campoEmail.setEnabled(false);
+        campoAniver.setEnabled(false);
     }
 
     
@@ -148,12 +150,28 @@ public class AgendaView extends javax.swing.JFrame {
 
     private void buttonAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAdicionarActionPerformed
         
-        controller.AdicionarContato();
+        campoTelefone.setEnabled(true);
+        campoEmail.setEnabled(true);
+        campoAniver.setEnabled(true);
+        
+        
+        if (controller.AdicionarContato()) {
+            
+            campoTextoGenerico.setText("");
+            campoTelefone.setText("");
+            campoEmail.setText("");
+            campoAniver.setText("");
+            
+            campoTelefone.setEnabled(false);
+            campoEmail.setEnabled(false);
+            campoAniver.setEnabled(false);
+        }
     }//GEN-LAST:event_buttonAdicionarActionPerformed
 
     private void buttonEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditarActionPerformed
        
         controller.editarContato();
+        campoTextoGenerico.setText("");
     }//GEN-LAST:event_buttonEditarActionPerformed
     
     
