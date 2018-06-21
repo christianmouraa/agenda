@@ -6,7 +6,7 @@
 package agenda;
 
 import agenda.view.AgendaView;
-import javax.swing.JOptionPane;
+
 /**
  *
  * @author chris

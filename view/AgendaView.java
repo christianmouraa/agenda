@@ -154,9 +154,13 @@ public class AgendaView extends javax.swing.JFrame {
         campoEmail.setEnabled(true);
         campoAniver.setEnabled(true);
         
-        
-        if (controller.AdicionarContato()) {
-            
+        if (controller.AdicionarContato(
+                    campoTextoGenerico.getText(),
+                    campoTelefone.getText(),
+                    campoEmail.getText(),
+                    campoAniver.getText()
+                )
+        ){
             campoTextoGenerico.setText("");
             campoTelefone.setText("");
             campoEmail.setText("");
@@ -174,6 +178,9 @@ public class AgendaView extends javax.swing.JFrame {
         campoTextoGenerico.setText("");
     }//GEN-LAST:event_buttonEditarActionPerformed
     
+    private void atualizarTabela(){
+    
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonAdicionar;

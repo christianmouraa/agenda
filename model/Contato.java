@@ -9,21 +9,19 @@ package agenda.model;
  *
  * @author chris
  */
-public class Contato {
+public  class Contato {
         
     private String nome;
     private String telefone;
     private String email;
     private String aniversario;
- 
+    private boolean contatoValido;
+    
     public Contato(){}
- 
+    
     public Contato(String nome, String telefone, String email, String aniversario){
         
-        this.nome = nome;
-        this.telefone = telefone;
-        this.email = email;
-        this.aniversario = aniversario;
+        contatoValido = setNome(nome) && setTelefone(telefone) && setEmail(email) && setAniversario(aniversario);
     }
 
     /**
@@ -38,12 +36,12 @@ public class Contato {
      */
     public boolean setNome(String nome) {
         
-        if (nome.matches("\\w")) {
+        if (nome.matches("\\w{1,}")) {
             
             this.nome = nome;
             return true;
             
-        }else return false;
+        }else return false; 
     }
     
     /**
@@ -58,7 +56,7 @@ public class Contato {
      */
     public boolean setTelefone(String telefone) {
         
-        if (telefone.matches("\\d{8}|\\d{9}|\\d{11}")) {
+        if (telefone.matches("\\d{3,11}")) {
             
             this.telefone = telefone;
             return true;
@@ -79,7 +77,7 @@ public class Contato {
         if (email.matches("[a-zA-Z1-9\\.-]{2,}@[a-zA-Z1-9-]{2,}\\.[a-zA-Z1-9-]{2,5}(\\.\\w{2,5}){0,1}")) {
             this.email = email;
             return true;
-        }return false;
+        }else return false;
     }    
     
     /**
@@ -92,8 +90,21 @@ public class Contato {
     /**
      * @param aniversario the aniversario to set
      */
-    public void setAniversario(String aniversario) {
-        this.aniversario = aniversario;
+    public boolean setAniversario(String aniversario) {
+        if (aniversario.matches("[0-2]{1}[0-9]|3[0-1]/0[1-9]|1[0-2]/19\\d{2}|20[0-9]{2}")) {
+            this.aniversario = aniversario;
+            return true;
+        }else return false;
+    }
+            
+    public void setByArray(String[] arrContato){
+        
+        contatoValido = 
+                this.setNome(arrContato[0]) && 
+                this.setTelefone(arrContato[1]) && 
+                this.setEmail(arrContato[2]) &&
+                this.setAniversario(arrContato[3]
+        );
     }
     
     public String[] toArray(){
@@ -108,6 +119,13 @@ public class Contato {
                 this.telefone + "," +
                 this.email + "," +
                 this.aniversario;
+    }
+
+    /**
+     * @return the contatoValido
+     */
+    public boolean isContatoValido() {
+        return contatoValido;
     }
     
 }
