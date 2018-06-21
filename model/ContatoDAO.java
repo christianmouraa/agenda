@@ -5,7 +5,6 @@
  */
 package agenda.model;
 
-import java.awt.Component;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,7 +12,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -29,136 +27,138 @@ public class ContatoDAO {
     /**
      * @return the CAMPOS
      */
-    public static String[] getCAMPOS() {
+    public String[] getCAMPOS() {
         return CAMPOS;
     }
     
-    public boolean adicionar(Contato contato, boolean ignorarDuplicado){
+    public boolean salvar(Contato contato, boolean ignorarDuplicado){
         
-        try {
-            
-            ArrayList<String> tempFile = getContatos();
-            
-            boolean canWrite = true;
-            
-            String[] contatoArray = contato.toArray();
-            
-            if (!ignorarDuplicado) {
-                
-                for (String contatoAtual : tempFile) {
+        ArrayList<Contato> tempFile = getContatos();
 
-                    if (contatoAtual.contains(contatoArray[1])){
+        boolean canWrite = true;
 
-                        canWrite = false;
-                    }
+        if (!ignorarDuplicado) {
+
+            for (Contato contatoTemp : tempFile) {
+
+                if (contatoTemp.getTelefone().equals(contato.getTelefone())){
+
+                    canWrite = false;
                 }
             }
-            
-            if (canWrite) {
-                
-                String linha = contato.serialize();
-                
-                tempFile.add(linha);
-                escreveArquivo(tempFile);
-                return true;
-            }
-            
-        } catch (IOException e) {
-            
-            System.out.println(e);
         }
-        
+
+        if (canWrite) {
+
+            tempFile.add(contato);
+            escreveArquivo(tempFile);
+            return true;
+        }
+
         return false;
     }
     
     public void alterar(String valorAntigo, String valorNovo){
         
-        try {
+        ArrayList<Contato> tempFile = this.getContatos();
 
-            String linha;
+        String[] arrContato;
 
-            ArrayList<String> tempFile = this.getContatos();
-            
-            int i = 0;
-            
-            for (String contatoAtual : tempFile) {
+        for (Contato contato : tempFile) {
 
-                if (contatoAtual.contains(valorAntigo)) {
+            arrContato = contato.toArray();
 
-                    linha = contatoAtual;
-                    linha = linha.replace(valorAntigo, valorNovo);
-                    tempFile.set(i, linha);
+            for (int j = 0; j < arrContato.length; j++) {
+
+                if (arrContato[j].equals(valorAntigo)) {
+
+                    arrContato[j] = valorNovo;
+                    contato.setByArray(arrContato);
                 }
-                i++;
             }
-            
-            escreveArquivo(tempFile);
-
-        } catch (IOException ex) {
-
-            System.out.println("Ocorreu um erro com o aarquivo\n" + ex);
         }
+            
+        escreveArquivo(tempFile);
         
     }
     
     public void excluir(File file){
-    
-        try {
-            
-            String numero = JOptionPane.showInputDialog("Entre com o numero do contato que deseja excluir");
-            
-            ArrayList<String> tempFile = this.getContatos();
-            
-            int index = 121212;
-            
-            for (int i = 0; i < tempFile.size(); i++) {
-                
-                if (tempFile.get(i).contains(numero)) {
-                    index = i;
-                }
+
+        String numero = JOptionPane.showInputDialog("Entre com o numero do contato que deseja excluir");
+
+        ArrayList<Contato> tempFile = this.getContatos();
+
+        int index = 121212;
+
+        for (int i = 0; i < tempFile.size(); i++) {
+
+            if (tempFile.get(i).getTelefone().matches(numero)) {
+                index = i;
             }
-            
-            if (index != 121212) {
-                
-                tempFile.remove(index);
-                
-            }else System.out.println("Contato não encontrado para o número " + numero);
-            
-            escreveArquivo(tempFile);
-            
-        } catch (IOException ex) {
-            System.out.println("Ocorreu um erro com o aquixo\n" + ex);;
         }
+
+        if (index != 121212) {
+
+            tempFile.remove(index);
+
+        }else System.out.println("Contato não encontrado para o número " + numero);
+
+        escreveArquivo(tempFile);
     }
     
-    public ArrayList getContatos() throws FileNotFoundException{
-        
-        ArrayList<String> tempFile = new ArrayList<>();
-        Scanner scan = new Scanner(file);
-        
-        String linha;
-        while(scan.hasNextLine()){
-            
-            linha = scan.nextLine();
-            tempFile.add(linha);
+    public ArrayList<Contato> getContatos(){
+
+        try{
+
+            ArrayList<Contato> tempFile = new ArrayList<>();
+            Scanner scan = new Scanner(file);
+
+            String linha;
+
+            while(scan.hasNextLine()){
+
+                linha = scan.nextLine();
+
+                String[] arrContato = linha.split(",");
+
+                Contato contato = new Contato(
+                        arrContato[0],
+                        arrContato[1],
+                        arrContato[2],
+                        arrContato[3]
+                );
+
+                tempFile.add(contato);
+            }
+
+            return tempFile;
+
+        }catch(FileNotFoundException e){
+
+            System.out.println("O arquivo não foi encontrado");
         }
         
-        return tempFile;
+       return null;
     }
     
-    private void escreveArquivo(ArrayList<String> tempFile) throws IOException{
     
-        BufferedWriter bw = new BufferedWriter(new FileWriter(this.file));
-        
-        for (String linha : tempFile) {
-            
-            if (!linha.equals("")) {
-                
-                bw.write(linha);
+    private void escreveArquivo(ArrayList<Contato> tempFile){
+               
+    
+        try{
+            BufferedWriter bw = new BufferedWriter(new FileWriter(this.file));
+
+            for (Contato contato : tempFile) {
+
+                bw.write(contato.serialize());
                 bw.newLine();
             }
-        }
+
+            bw.close();
         
-        bw.close();
+        }catch(IOException e){
+            
+            System.out.println("Ocoreu um erro com o arquivo");
+        }
     }
 }

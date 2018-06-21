@@ -8,11 +8,7 @@ package agenda.controller;
 import agenda.model.ContatoDAO;
 import agenda.model.Contato;
 import agenda.view.AgendaView;
-import java.io.FileNotFoundException;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -40,84 +36,75 @@ public class AgendaController {
         String valorNovo = view.getCampoTextoGenerico().getText(); 
         
         model.alterar(valorAntigo, valorNovo);
-        this.popularTabela();
-//        switch(coluna){
-//            
-//            case 0:
-//                if (valorNovo.matches("\\w")) model.alterar(valorAntigo, valorNovo);
-//                else JOptionPane.showMessageDialog(view, "Entre apenas com letras e/ou números");
-//                break;
-//                
-//            case 1:
-//                if (valorNovo.matches("\\d{8,12}")) model.alterar(valorAntigo, valorNovo);
-//                else JOptionPane.showMessageDialog(view, valorNovo + " não é um número válido");
-//                break;
-//                
-//            case 2:
-//                String emailRegex = "[a-zA-Z1-9\\.-]{2,}@[a-zA-Z1-9-]{2,}\\.[a-zA-Z1-9-]{2,5}\\.{0,1}\\w{0,3}.*[^\\.]$";
-//                if (valorNovo.matches(emailRegex)) model.alterar(valorAntigo, valorNovo);
-//                else JOptionPane.showMessageDialog(view, "Este não é um formato de e-mail válido");
-//                break;
-//            
-//            case 3:
-//                if (valorNovo.matches("\\d{2}/\\d{2}")) {
-//                
-//                }
-//        }
-        
+        this.popularTabela();        
     }
     
-    public boolean AdicionarContato(){
+    public boolean AdicionarContato(String nome, String telefone, String email, String aniversario){
         
-        Contato contato = new Contato(
-                
-            view.getCampoTextoGenerico().getText(),
-            view.getCampoTelefone().getText(),
-            view.getCampoEmail().getText(),
-            view.getCampoAniver().getText()
-        );
+        Contato contato = new Contato(nome, telefone, email, aniversario);
         
-        if (!contato.getTelefone().equals("")) {
+        if (contato.isContatoValido()) {
             
-            if (!model.adicionar(contato, false)) {
+            if (!model.salvar(contato, false)) {
                 int opcao = JOptionPane.showConfirmDialog(view, 
                     "Este número de telefone já está relacionado à um contato"
                   + "deseja continuar?"
                 );
 
-                if (opcao == 0) model.adicionar(contato, true);
+                if (opcao == 0) model.salvar(contato, true);
+                
                 else return false;
             }
-
-            popularTabela();
             
             return true;
+            
+        }else {
+            
+            String[] arrContato = contato.toArray();
+            String mensagem = "Erro de formato de entrada:";
+            
+            for (int i = 0; i < arrContato.length; i++) {
+            
+                if (arrContato[i].equals("")) {
+                   
+                   switch(i){
+                       
+                        case 1: 
+                            mensagem = mensagem.concat("\n * Nome deve ter apenas letras e números.");
+                            break;
+                       
+                        case 2:
+                            mensagem = mensagem.concat("\n * Telefone deve conter apenas números e ter entre 3 e 11 dígitos.");
+                            break;
+                        case 3:
+                            mensagem = mensagem.concat("\n * Formato de email inválido");
+                            break;
+                        case 4: 
+                            mensagem = mensagem.concat("\n * Aniversário deve estar no padrão dd/mm/aaaa");
+                   }
+                }
+            }
+            
+            return false;
         }
-        
-        return false;
     }
     
     public void popularTabela(){
-        
-        try {
-            
-            ArrayList<String> contatos = model.getContatos();
-            DefaultTableModel tableModel = (DefaultTableModel) view.getTabelaContatos().getModel();
-   
-            //limpa conteudo atual da tabela
-            tableModel.setRowCount(0);
-            
-            for (String contato : contatos) {
-            
-                String[] contatoArray = contato.split(",");
-                tableModel.addRow(contatoArray);
-            }
-            
-            view.getTabelaContatos().setModel(tableModel);
-            
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(AgendaController.class.getName()).log(Level.SEVERE, null, ex);
+
+        ArrayList<Contato> contatos = model.getContatos();
+        DefaultTableModel tableModel = (DefaultTableModel) view.getTabelaContatos().getModel();
+
+        //limpa conteudo atual da tabela
+        tableModel.setRowCount(0);
+
+        for (Contato contato : contatos) {
+
+            String[] arrContato = contato.toArray();
+            tableModel.addRow(arrContato);
         }
+
+        view.getTabelaContatos().setModel(tableModel);
+
     }
   
 }
